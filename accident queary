@@ -1,0 +1,13 @@
+SELECT
+"public".accident.accident_localid,
+"public".accident.numberpersoninvolved,
+"public".accident.dateofaccident,
+CASE WHEN (("Vill".gazlevel_guid)::text = '0a0a-5064-12c51e3a5f3-2ae37d4-1be1-a6'::text) THEN "Vill".gazetteername ELSE ''::character varying END AS "Village",
+CASE WHEN (("GND".gazlevel_guid)::text = '0a0a-5064-12c51e3a5a5-eb854a5-1be0-4c'::text) THEN "GND".gazetteername ELSE "Vill".gazetteername END AS "GN Division",
+CASE WHEN (("DSD".gazlevel_guid)::text = '0a0a-5064-12c51e3a576-517c9fbb-1bdf-8'::text) THEN "DSD".gazetteername ELSE "GND".gazetteername END AS "DS Division",
+CASE WHEN (("DIS".gazlevel_guid)::text = '0a0a-5064-12c51e3a528-59c0746f-1bde-f'::text) THEN "DIS".gazetteername ELSE "DSD".gazetteername END AS "District",
+"public".accident.dataentrydate,
+"type".enumvalue AS "Type of Accident",
+date_part('YEAR'::text, accident.dateofaccident) AS "Date of Accident Year",
+date_part('YEAR'::text, accident.dataentrydate) AS "Data Entry Year"
+FROM ((((((accident LEFT JOIN location ON (((accident.location_guid)::text = (location.location_guid)::text))) LEFT JOIN gazetteer "Vill" ON ((("Vill".gazetteer_guid)::text = (location.gazetteer_guid)::text))) LEFT JOIN gazetteer "GND" ON ((("Vill".parentgazetteer_guid)::text = ("GND".gazetteer_guid)::text))) LEFT JOIN gazetteer "DSD" ON ((("GND".parentgazetteer_guid)::text = ("DSD".gazetteer_guid)::text))) LEFT JOIN gazetteer "DIS" ON ((("DSD".parentgazetteer_guid)::text = ("DIS".gazetteer_guid)::text))) LEFT JOIN imsmaenum type ON (((accident.accidenttypeenum_guid)::text = (type.imsmaenum_guid)::text)))
