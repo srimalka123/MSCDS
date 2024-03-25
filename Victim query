@@ -1,0 +1,20 @@
+SELECT
+"public".victim.victim_localid,
+"public".accident.dateofaccident,
+date_part('YEAR'::text, accident.dateofaccident) AS "Year",
+"public".victim.familyname,
+"public".victim.givenname,
+"public".victim.age,
+"public".victim.dateofbirth,
+"public".victim.address,
+"public".victim.occupation,
+"public".victim.nationality,
+"public".victim.org_guid,
+"public".victim.date_of_death,
+CASE WHEN (("GND".gazlevel_guid)::text = '0a0a-5064-12c51e3a5a5-eb854a5-1be0-4c'::text) THEN "GND".gazetteername ELSE "Vill".gazetteername END AS "GN Division",
+CASE WHEN (("DSD".gazlevel_guid)::text = '0a0a-5064-12c51e3a576-517c9fbb-1bdf-8'::text) THEN "DSD".gazetteername ELSE "GND".gazetteername END AS "DS Division",
+CASE WHEN (("DIS".gazlevel_guid)::text = '0a0a-5064-12c51e3a528-59c0746f-1bde-f'::text) THEN "DIS".gazetteername ELSE "DSD".gazetteername END AS "District",
+"Gend".enumvalue AS "Gender",
+"Kilin".enumvalue AS "Killed Or Injured",
+"public".victim.marital_status
+FROM (((((((((victim LEFT JOIN link ON (((victim.victim_guid)::text = (link.to_guid)::text))) JOIN accident ON (((link.from_guid)::text = (accident.accident_guid)::text))) JOIN location ON (((accident.location_guid)::text = (location.location_guid)::text))) JOIN gazetteer "Vill" ON (((location.gazetteer_guid)::text = ("Vill".gazetteer_guid)::text))) JOIN gazetteer "GND" ON ((("Vill".parentgazetteer_guid)::text = ("GND".gazetteer_guid)::text))) JOIN gazetteer "DSD" ON ((("GND".parentgazetteer_guid)::text = ("DSD".gazetteer_guid)::text))) JOIN gazetteer "DIS" ON ((("DSD".parentgazetteer_guid)::text = ("DIS".gazetteer_guid)::text))) JOIN imsmaenum "Gend" ON (((victim.genderenum_guid)::text = ("Gend".imsmaenum_guid)::text))) JOIN imsmaenum "Kilin" ON (((victim.killedorinjuredenum_guid)::text = ("Kilin".imsmaenum_guid)::text)))
